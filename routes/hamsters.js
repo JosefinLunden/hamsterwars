@@ -18,7 +18,7 @@ router.get('/random', async (req , res) => {
     })
     // get a random hamster with math.random. 
     // * hamsterslength så den fungerar oavsett hur många hamstrar som läggs till eller tas bort. 
-    res.send(hamstersArray[Math.floor(Math.random() * hamstersArray.length)])
+    res.send({ msg: `Here is your random hamster.`, randomHamster: hamstersArray[Math.floor(Math.random() * hamstersArray.length)]})
 
   }
   catch(err) {
@@ -38,12 +38,12 @@ router.get('/', async (req,res) => {
     // hämtar alla hamstrar i firebase. 
     let snapShot = await db.collection('hamsters').get();
     
-    // loopa igenom dom och pusha in i hamestersarray
+    // loopa igenom och pusha in i hamestersarray
     snapShot.forEach(doc => {
       hamstersArray.push(doc.data());
     })
 
-    res.send({hamsters: hamstersArray})
+    res.send({ msg: `Here is all the hamsters, ready for war`, AllHamsters: hamstersArray })
   }
   catch(err) {
     console.error(err)
@@ -95,7 +95,7 @@ router.get('/:id', async (req, res) => {
     snapShot.forEach(doc => {
       hamsterId = doc.data();
     })
-    res.send(hamsterId)
+    res.send({ msg: `Here is the hamster you were looking for:`, hamster: hamsterId })
   }
   catch(err) {
     console.error(err)
