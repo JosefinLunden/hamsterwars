@@ -6,16 +6,19 @@ const { auth, db } = require ('./../firebase');
 router.get('/random', async (req , res) => {
 
   try {
-    let hamster;
-    let randomHamsterId = Math.floor(Math.random() * 41); // försöka lösa utan *41. 
-    let snapShot = await db.collection('hamsters').where("id", "==", randomHamsterId).get();
+
+    let hamstersArray = [];
+    // get all hamsters from firebase
+    let snapShot = await db.collection('hamsters').get();
+   
     console.log(snapShot)
     
     snapShot.forEach(doc => {
-      hamster = doc.data();
-      console.log(hamster)
+      hamstersArray.push(doc.data());
     })
-    res.send(hamster)
+    // get a random hamster with math.random. 
+    // * hamsterslength så den fungerar oavsett hur många hamstrar som läggs till eller tas bort. 
+    res.send(hamstersArray[Math.floor(Math.random() * hamstersArray.length)])
 
   }
   catch(err) {
@@ -32,7 +35,7 @@ router.get('/', async (req,res) => {
     // tom array för att lägga in alla hamsters som hämtas med GET. 
     let hamstersArray = []; 
     
-    // get all hamsters from firebase.
+    // hämtar alla hamstrar i firebase. 
     let snapShot = await db.collection('hamsters').get();
     
     // loopa igenom dom och pusha in i hamestersarray
@@ -49,25 +52,27 @@ router.get('/', async (req,res) => {
  
 })
 
-//PUT wins and defeats 
+//PUT wins, defeats and games
 router.put('/:id/results', async (req,res) => {
-  
+
   try{
+    
     // find hamster with id
     let snapShot = await db.collection('hamsters').where("id", "==", parseInt(req.params.id)).get();
-    console.log(req.body)
-    console.log(snapShot)
-    snapShot.forEach(doc => {
+    
+    snapShot.forEach(async doc => {
       let hamster = doc.data();
       
-      // update wins, defeats, games 
-      hamster.wins += parseInt(req.body.wins);
-      hamster.defeats += parseInt(req.body.defeats);
-      hamster.games ++;
+      // updates wins, defeats och games with data from insomnia(req.body)
+      let results = {
+      wins: hamster.wins += parseInt(req.body.wins),
+      defeats: hamster.defeats += parseInt(req.body.defeats),
+      games: hamster.games + parseInt(req.body.games)
+    }
 
-      // update FB.
-      db.collection('hamsters').doc(doc.id).set(hamster)
-      .then(res.send({ msg: 'Hamster updated' }))
+      // update FB with the new result
+      await db.collection('hamsters').doc(doc.id).update(results)
+      .then(res.send({ msg: 'Result updated', newResult: results }))
       .catch(err => { throw err; })
     })
   }
@@ -84,7 +89,7 @@ router.get('/:id', async (req, res) => {
   try {
 
     let hamsterId;
-
+    // find hamster with id
     let snapShot = await db.collection('hamsters').where("id", "==", parseInt(req.params.id)).get();
 
     snapShot.forEach(doc => {
