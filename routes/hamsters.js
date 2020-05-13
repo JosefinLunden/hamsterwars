@@ -10,6 +10,7 @@ router.get('/random', async (req , res) => {
     let hamstersArray = [];
     // get all hamsters from firebase
     let snapShot = await db.collection('hamsters').get();
+    let numberOfHamsters = snapShot.size;
    
     console.log(snapShot)
     
@@ -18,7 +19,7 @@ router.get('/random', async (req , res) => {
     })
     // get a random hamster with math.random. 
     // * hamsterslength så den fungerar oavsett hur många hamstrar som läggs till eller tas bort. 
-    res.send({ msg: `Here is your random hamster.`, randomHamster: hamstersArray[Math.floor(Math.random() * hamstersArray.length)]})
+    res.send({ msg: `Here is your random hamster.`, randomHamster: hamstersArray[Math.floor(Math.random() * numberOfHamsters)]})
 
   }
   catch(err) {
