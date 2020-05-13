@@ -60,19 +60,19 @@ router.put('/:id/results', async (req,res) => {
     // find hamster with id
     let snapShot = await db.collection('hamsters').where("id", "==", parseInt(req.params.id)).get();
     
-    snapShot.forEach(async doc => {
+    snapShot.forEach(doc => {
       let hamster = doc.data();
       
       // updates wins, defeats och games with data from insomnia(req.body)
-      let results = {
+      let upDateResults = {
       wins: hamster.wins += parseInt(req.body.wins),
       defeats: hamster.defeats += parseInt(req.body.defeats),
-      games: hamster.games + parseInt(req.body.games)
+      games: hamster.games + 1
     }
 
       // update FB with the new result
-      await db.collection('hamsters').doc(doc.id).update(results)
-      .then(res.send({ msg: 'Result updated', newResult: results }))
+      db.collection('hamsters').doc(doc.id).update(upDateResults)
+      .then(res.send({ msg: 'Result updated', upDateResults }))
       .catch(err => { throw err; })
     })
   }
