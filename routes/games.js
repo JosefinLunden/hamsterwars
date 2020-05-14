@@ -39,9 +39,10 @@ router.post('/', async (req,res) => {
       timeStamp: date,
       contestants: req.body.contestants,
       winner: req.body.winner
-  })
-  .then(res.send({ msg: 'Game is on' }))
-  .catch(err => { throw err; })
+    })
+    
+    res.send({ msg: 'Game is on' })
+  
   }
   catch(err) {
     console.error(err)

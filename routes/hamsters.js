@@ -8,8 +8,10 @@ router.get('/random', async (req , res) => {
   try {
 
     let hamstersArray = [];
+    
     // get all hamsters from firebase
     let snapShot = await db.collection('hamsters').get();
+    // get the total number of hamsters in the collection
     let numberOfHamsters = snapShot.size;
    
     console.log(snapShot)
@@ -18,7 +20,7 @@ router.get('/random', async (req , res) => {
       hamstersArray.push(doc.data());
     })
     // get a random hamster with math.random. 
-    // * hamsterslength så den fungerar oavsett hur många hamstrar som läggs till eller tas bort. 
+    // * numberOfHamsters så den fungerar oavsett hur många hamstrar som läggs till eller tas bort. 
     res.send({ msg: `Here is your random hamster.`, randomHamster: hamstersArray[Math.floor(Math.random() * numberOfHamsters)]})
 
   }
@@ -73,13 +75,13 @@ router.put('/:id/results', async (req,res) => {
 
       // update FB with the new result
       db.collection('hamsters').doc(doc.id).update(upDateResults)
-      .then(res.send({ msg: 'Result updated', upDateResults }))
-      .catch(err => { throw err; })
+      res.send({ msg: 'Result updated', upDateResults })
+      
     })
   }
   catch (err) {
     console.error(err)
-    res.status(500).send(err);
+    res.status(500).send();
   }
   
 })

@@ -9,7 +9,7 @@ router.get('/top', async (req,res) => {
     // empty array to put the five hamsters in.
     let hamstersArray = []; 
     // find the hamsters, limit(5) to only return five and orderby() sort the data returned in descending order. 
-    let snapShot = await db.collection('hamsters').limit(5).orderBy('wins', 'desc').get()
+    let snapShot = await db.collection('hamsters').orderBy('wins', 'desc').limit(5).get()
 
     snapShot.forEach(doc => {
       hamstersArray.push(doc.data());
@@ -32,7 +32,7 @@ router.get('/bottom', async (req,res) => {
 
     let hamstersArray = []; 
     
-    let snapShot = await db.collection('hamsters').limit(5).orderBy('defeats', 'desc').get()
+    let snapShot = await db.collection('hamsters').orderBy('defeats', 'desc').limit(5).get()
 
     snapShot.forEach(doc => {
       hamstersArray.push(doc.data());
