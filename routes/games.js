@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const router = new Router(); 
 const { auth, db } = require ('./../firebase');
+var uniqid = require('uniqid');
 
 
 // GET all games
@@ -29,13 +30,14 @@ router.post('/', async (req,res) => {
 
   try {
     
+   
     // converts the date format to YYYY-MM-DD, and split out the time. 
     let date = new Date().toISOString().split('T')[0];
     
     // create the collection game (if it not exist)
     // with id, timestamp, contestants (the hamsters from in insomnia), winners
     await db.collection('games').doc().set({
-      id: req.body.id,
+      id: uniqid(),
       timeStamp: date,
       contestants: req.body.contestants,
       winner: req.body.winner
